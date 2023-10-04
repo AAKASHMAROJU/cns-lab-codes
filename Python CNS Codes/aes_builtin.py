@@ -1,21 +1,26 @@
-import os
-import pyaes
+from Crypto.Cipher import AES
 
-# Generate a random 128-bit (16-byte) AES key
-key = os.urandom(16)
+# encryption key
+key = b'C&F)H@McQfTjWnZr'
 
-# Create an AES cipher object
-aes = pyaes.AESModeOfOperationCTR(key)
+# create new instance of cipher
+cipher = AES.new(key, AES.MODE_EAX)
 
-# Plaintext to encrypt
-plaintext = "hello world"
+# data to be encrypted
+data = "hello world!".encode()
 
-# Encrypt the plaintext
-cipherText = aes.encrypt(plaintext.encode('utf-8'))  # Encode plaintext as bytes
+# nonce is a random value generated each time we instantiate the cipher using new()
+nonce = cipher.nonce
 
-# Decrypt the ciphertext
-decrypted = aes.decrypt(cipherText).decode('utf-8')  # Decode the decrypted bytes to string
+# encrypt the data
+ciphertext = cipher.encrypt(data)
 
-print("Original plaintext:", plaintext)
-print("Encrypted ciphertext:", repr(cipherText))
-print("Decrypted plaintext:", decrypted)
+# print the encrypted data
+print("Cipher text:", ciphertext)
+
+# generate new instance with the key and nonce same as encryption cipher
+cipher = AES.new(key, AES.MODE_EAX, nonce=nonce)
+
+# decrypt the data
+plaintext = cipher.decrypt(ciphertext)
+print("Plain text:", plaintext)
